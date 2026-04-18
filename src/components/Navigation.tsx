@@ -32,7 +32,7 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
   return (
     <aside className="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-surface border-r border-border p-8 space-y-12 z-50">
       <div className="logo flex flex-col">
-        <span className="font-bold text-xl tracking-[-0.5px]">Chrona.</span>
+        <span className="font-bold text-xl tracking-[-0.5px]">ROUTINE.</span>
       </div>
 
       <nav className="space-y-4 flex-grow">
