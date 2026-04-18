@@ -8,59 +8,13 @@ import HistoryView from './components/HistoryView';
 import { View, Entry } from './types';
 import { getEntries, saveEntry } from './lib/storage';
 
-const INITIAL_ENTRIES: Entry[] = [
-  {
-    id: '1',
-    type: 'workout',
-    date: new Date().toISOString(),
-    workoutType: 'Strength Training',
-    duration: 64,
-    notes: 'Morning Hypertrophy session. Focused on volume.',
-    intensity: 'High',
-    volume: 12400
-  },
-  {
-    id: '2',
-    type: 'meal',
-    date: new Date().toISOString(),
-    time: '12:15',
-    description: 'Mediterranean Quinoa Bowl',
-    category: 'lunch',
-    calories: 740
-  },
-  {
-    id: '3',
-    type: 'meal',
-    date: new Date(Date.now() - 86400000).toISOString(),
-    time: '18:45',
-    description: 'Pan-Seared Salmon & Asparagus',
-    category: 'dinner',
-    calories: 580
-  },
-  {
-    id: '4',
-    type: 'workout',
-    date: new Date(Date.now() - 86400000).toISOString(),
-    workoutType: 'Evening Trail Run',
-    duration: 45,
-    notes: 'Reached 5.2km milestone.',
-    volume: 0
-  }
-];
-
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
     const stored = getEntries();
-    if (stored.length === 0) {
-      // Seed with mock data if empty
-      INITIAL_ENTRIES.forEach(saveEntry);
-      setEntries(INITIAL_ENTRIES);
-    } else {
-      setEntries(stored);
-    }
+    setEntries(stored);
   }, []);
 
   const handleSaveEntry = (entry: Entry) => {
@@ -89,7 +43,7 @@ export default function App() {
         <div className="flex-1">
           {currentView === 'dashboard' && <DashboardView entries={entries} onViewChange={setCurrentView} />}
           {currentView === 'habit-log' && <HabitLogView onSave={handleSaveEntry} />}
-          {currentView === 'insights' && <InsightsView />}
+          {currentView === 'insights' && <InsightsView entries={entries} />}
           {currentView === 'history' && <HistoryView entries={entries} />}
         </div>
 

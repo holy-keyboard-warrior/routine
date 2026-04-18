@@ -3,11 +3,20 @@ import { motion } from 'motion/react';
 import { Sparkles, Moon, TrendingUp, Dumbbell } from 'lucide-react';
 import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameMonth } from 'date-fns';
 
-export default function InsightsView() {
+import { Entry } from '../types';
+
+interface InsightsViewProps {
+  entries: Entry[];
+}
+
+export default function InsightsView({ entries }: InsightsViewProps) {
   const today = new Date();
   const monthStart = startOfMonth(today);
   const monthEnd = endOfMonth(today);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+
+  const workoutCount = entries.filter(e => e.type === 'workout' && isSameMonth(parseISO(e.date), today)).length;
+  const mealCount = entries.filter(e => e.type === 'meal' && isSameMonth(parseISO(e.date), today)).length;
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pb-32 lg:pb-10">
@@ -18,7 +27,7 @@ export default function InsightsView() {
           <span className="bg-primary text-white px-3 py-1 rounded-[4px] text-[10px] font-bold uppercase">
             {format(today, 'MMMM yyyy')}
           </span>
-          <span className="text-[13px] text-on-surface-muted">84% Consistency achieved</span>
+          <span className="text-[13px] text-on-surface-muted">Current month archive overview</span>
         </div>
       </section>
 
@@ -45,13 +54,15 @@ export default function InsightsView() {
           
           <div className="grid grid-cols-7 gap-1.5">
             {days.map((day, idx) => {
-              const intensity = Math.floor(Math.random() * 5);
+              const dayStr = format(day, 'yyyy-MM-dd');
+              const dayEntries = entries.filter(e => e.date.startsWith(dayStr));
+              const intensity = Math.min(dayEntries.length, 4);
               const colors = ['bg-[#EBEBEB]', 'bg-[#D1E7D3]', 'bg-[#A3CFAB]', 'bg-[#75B782]', 'bg-[#479F5A]'];
               
               return (
                 <div 
                   key={idx}
-                  title={format(day, 'MMM d')}
+                  title={`${format(day, 'MMM d')}: ${dayEntries.length} entries`}
                   className={`aspect-square ${colors[intensity]} rounded-[2px] transition-all cursor-crosshair`}
                 ></div>
               );
@@ -62,24 +73,26 @@ export default function InsightsView() {
         {/* Info Column */}
         <div className="lg:col-span-4 space-y-10">
           <div>
-            <span className="section-label">Stats Tracker</span>
+            <span className="section-label">Stats Tracker (Month)</span>
             <div className="routine-card space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-[13px] text-on-surface-muted">Workouts</span>
-                <span className="text-[15px] font-semibold">24</span>
+                <span className="text-[15px] font-semibold">{workoutCount}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[13px] text-on-surface-muted">Meal Streak</span>
-                <span className="text-[15px] font-semibold">18 Days</span>
+                <span className="text-[13px] text-on-surface-muted">Meals Logged</span>
+                <span className="text-[15px] font-semibold">{mealCount}</span>
               </div>
             </div>
           </div>
 
           <div>
-             <span className="section-label">Note</span>
+             <span className="section-label">Journal Context</span>
              <div className="routine-card bg-bg-color border-none">
                 <p className="text-[13px] leading-relaxed text-on-surface-muted">
-                  Your most disciplined time is <strong className="text-on-surface">Mornings (7-9 AM)</strong>. Consistency is up 12%.
+                  {entries.length > 0
+                    ? `You have documented your journey ${entries.length} times. Consistency builds the archive.`
+                    : "No data patterns to visualize yet. Your first entry will begin the chronicle."}
                 </p>
              </div>
           </div>
@@ -88,6 +101,9 @@ export default function InsightsView() {
     </div>
   );
 }
+
+import { parseISO } from 'date-fns';
+
 
 function InsightTag({ icon, title, value, sub }: any) {
   return (

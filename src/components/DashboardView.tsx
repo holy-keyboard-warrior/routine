@@ -9,10 +9,10 @@ interface DashboardViewProps {
 }
 
 export default function DashboardView({ entries, onViewChange }: DashboardViewProps) {
-  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  const todayDate = new Date().toISOString().split('T')[0];
+  const todayLabel = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
   
-  // Mock data for progress
-  const progressPercent = 82;
+  const todayEntries = entries.filter(e => e.date.startsWith(todayDate));
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pb-32 lg:pb-10">
@@ -34,12 +34,6 @@ export default function DashboardView({ entries, onViewChange }: DashboardViewPr
               >
                 + Log Workout
               </button>
-              <button 
-                onClick={() => onViewChange('habit-log')}
-                className="routine-btn routine-btn-outline w-full"
-              >
-                + Track Habit
-              </button>
             </div>
           </div>
 
@@ -47,18 +41,12 @@ export default function DashboardView({ entries, onViewChange }: DashboardViewPr
             <span className="section-label">Stats</span>
             <div className="routine-card space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-[13px] text-on-surface-muted">Day Streak</span>
-                <span className="text-[15px] font-semibold">12 days</span>
+                <span className="text-[13px] text-on-surface-muted">Total Logs</span>
+                <span className="text-[15px] font-semibold">{entries.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[13px] text-on-surface-muted">Goal Progress</span>
-                <span className="text-[15px] font-semibold">85%</span>
-              </div>
-              <div className="h-1 bg-border w-full rounded-full overflow-hidden mt-2">
-                <div 
-                  className="h-full bg-success rounded-full transition-all duration-1000" 
-                  style={{ width: `85%` }}
-                ></div>
+                <span className="text-[13px] text-on-surface-muted">Today</span>
+                <span className="text-[15px] font-semibold">{todayEntries.length}</span>
               </div>
             </div>
           </div>
@@ -66,64 +54,35 @@ export default function DashboardView({ entries, onViewChange }: DashboardViewPr
 
         {/* Center Column: Today's Activity */}
         <div className="lg:col-span-6 order-1 lg:order-2">
-          <span className="section-label">Today's Activity — {today}</span>
+          <span className="section-label">Today's Activity — {todayLabel}</span>
           <div className="bg-surface rounded-xl overflow-hidden">
-            <ActivityItem 
-              time="09:15 AM"
-              title="Hydration Target" 
-              meta="Water • 0.5L" 
-              tag="Completed"
-            />
-            <ActivityItem 
-              time="07:30 AM"
-              title="Deep Work: Reading" 
-              meta="Habit • 45m" 
-              tag="Completed"
-            />
-            <ActivityItem 
-              time="09:00 PM"
-              title="Evening Meditation" 
-              meta="Scheduled" 
-              tag="Pending"
-              dimmed
-            />
-            {entries.filter(e => e.type === 'meal').map(meal => (
-               <ActivityItem 
-                key={meal.id}
-                time={meal.time}
-                title={meal.description} 
-                meta={`${meal.category.toUpperCase()} • Nutritious`} 
-                tag="Logged"
-               />
-            ))}
+            {todayEntries.length === 0 ? (
+              <div className="py-20 text-center border-b border-border">
+                <p className="text-on-surface-muted italic text-[13px]">No activity logged for today.</p>
+              </div>
+            ) : (
+              todayEntries.map(entry => (
+                <ActivityItem 
+                  key={entry.id}
+                  time={entry.type === 'meal' ? entry.time : undefined}
+                  title={entry.type === 'meal' ? entry.description : entry.workoutType} 
+                  meta={entry.type === 'meal' ? entry.category.toUpperCase() : `${entry.duration}m Workout`} 
+                  tag="Logged"
+                />
+              ))
+            )}
           </div>
         </div>
 
-        {/* Right Column: Insights */}
+        {/* Right Column: Analytics */}
         <div className="lg:col-span-3 space-y-10 order-3 shadow-sm lg:shadow-none">
-           <div>
-            <span className="section-label">Monthly View</span>
-            <div className="routine-card">
-              <div className="grid grid-cols-7 gap-1">
-                {Array.from({ length: 28 }).map((_, i) => {
-                  const level = Math.floor(Math.random() * 5);
-                  const colors = ['bg-[#EBEBEB]', 'bg-[#D1E7D3]', 'bg-[#A3CFAB]', 'bg-[#75B782]', 'bg-[#479F5A]'];
-                  return (
-                    <div key={i} className={`aspect-square ${colors[level]} rounded-[2px]`}></div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 text-[11px] text-on-surface-muted">
-                Oct Consistency: 26 / 31 days
-              </div>
-            </div>
-          </div>
-
           <div>
-            <span className="section-label">Insights</span>
+            <span className="section-label">Consistency</span>
             <div className="routine-card">
               <p className="text-[13px] leading-relaxed text-on-surface-muted">
-                You're tracking <strong className="text-on-surface">20% more workouts</strong> than last week. Your most frequent meal time is <strong className="text-on-surface">12:45 PM</strong>.
+                {entries.length > 0 
+                  ? `You have documented ${entries.length} moments in your archive.`
+                  : "Start logging your daily movements and fuel to see patterns emerge."}
               </p>
             </div>
           </div>
