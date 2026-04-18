@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Dumbbell, Utensils, Clock } from 'lucide-react';
 import { Entry, MealCategory } from '../types';
+import { format } from 'date-fns';
 
 interface HabitLogViewProps {
   onSave: (entry: Entry) => void;
+  selectedDate: Date;
 }
 
-export default function HabitLogView({ onSave }: HabitLogViewProps) {
+export default function HabitLogView({ onSave, selectedDate }: HabitLogViewProps) {
   // Workout State
   const [workoutType, setWorkoutType] = useState('Strength Training');
   const [duration, setDuration] = useState('');
@@ -24,7 +26,7 @@ export default function HabitLogView({ onSave }: HabitLogViewProps) {
     onSave({
       id: Math.random().toString(36).substr(2, 9),
       type: 'workout',
-      date: new Date().toISOString(),
+      date: selectedDate.toISOString(),
       workoutType,
       duration: parseInt(duration) || 0,
       notes,
@@ -39,7 +41,7 @@ export default function HabitLogView({ onSave }: HabitLogViewProps) {
     onSave({
       id: Math.random().toString(36).substr(2, 9),
       type: 'meal',
-      date: new Date().toISOString(),
+      date: selectedDate.toISOString(),
       time: mealTime,
       description: mealDesc,
       category: mealCat,
@@ -52,7 +54,7 @@ export default function HabitLogView({ onSave }: HabitLogViewProps) {
     <div className="p-6 md:p-10 max-w-4xl mx-auto w-full pb-32 lg:pb-10">
       <div className="mb-10">
         <span className="section-label">Log Entry</span>
-        <h1 className="text-3xl font-bold tracking-tight text-on-surface">Document your progress.</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-on-surface">Journal for {format(selectedDate, 'MMM d')}.</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

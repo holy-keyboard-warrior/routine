@@ -2,17 +2,18 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Utensils, Dumbbell, Droplets, BookOpen, UserCircle2 } from 'lucide-react';
 import { Entry } from '../types';
+import { format, isSameDay, parseISO } from 'date-fns';
 
 interface DashboardViewProps {
   entries: Entry[];
   onViewChange: (view: any) => void;
+  selectedDate: Date;
 }
 
-export default function DashboardView({ entries, onViewChange }: DashboardViewProps) {
-  const todayDate = new Date().toISOString().split('T')[0];
-  const todayLabel = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+export default function DashboardView({ entries, onViewChange, selectedDate }: DashboardViewProps) {
+  const todayLabel = format(selectedDate, 'MMMM d');
   
-  const todayEntries = entries.filter(e => e.date.startsWith(todayDate));
+  const todayEntries = entries.filter(e => isSameDay(parseISO(e.date), selectedDate));
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pb-32 lg:pb-10">

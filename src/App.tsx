@@ -7,10 +7,12 @@ import InsightsView from './components/InsightsView';
 import HistoryView from './components/HistoryView';
 import { View, Entry } from './types';
 import { getEntries, saveEntry } from './lib/storage';
+import { startOfDay } from 'date-fns';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
 
   useEffect(() => {
     const stored = getEntries();
@@ -38,11 +40,26 @@ export default function App() {
       <Navigation currentView={currentView} onViewChange={setCurrentView} />
       
       <main className="flex-1 lg:ml-64 relative min-h-screen flex flex-col">
-        <Header title={getTitle()} />
+        <Header 
+          title={getTitle()} 
+          selectedDate={selectedDate} 
+          onDateChange={setSelectedDate} 
+        />
         
         <div className="flex-1">
-          {currentView === 'dashboard' && <DashboardView entries={entries} onViewChange={setCurrentView} />}
-          {currentView === 'habit-log' && <HabitLogView onSave={handleSaveEntry} />}
+          {currentView === 'dashboard' && (
+            <DashboardView 
+              entries={entries} 
+              onViewChange={setCurrentView} 
+              selectedDate={selectedDate}
+            />
+          )}
+          {currentView === 'habit-log' && (
+            <HabitLogView 
+              onSave={handleSaveEntry} 
+              selectedDate={selectedDate}
+            />
+          )}
           {currentView === 'insights' && <InsightsView entries={entries} />}
           {currentView === 'history' && <HistoryView entries={entries} />}
         </div>
