@@ -44,6 +44,7 @@ export default function App() {
           title={getTitle()} 
           selectedDate={selectedDate} 
           onDateChange={setSelectedDate} 
+          entries={entries}
         />
         
         <div className="flex-1">

@@ -43,23 +43,13 @@ export default function Navigation({ currentView, onViewChange }: NavigationProp
         })}
       </nav>
 
-      <div className="pt-8 border-t border-border space-y-6">
+      <div className="pt-8 border-t border-border">
         <button 
           onClick={() => onViewChange('habit-log')}
           className="routine-btn w-full"
         >
           + Quick Log
         </button>
-        <div className="space-y-4">
-          <button className="flex items-center gap-3 text-on-surface-muted text-[11px] uppercase tracking-widest hover:text-on-surface transition-colors">
-            <HelpCircle size={14} />
-            Support
-          </button>
-          <button className="flex items-center gap-3 text-on-surface-muted text-[11px] uppercase tracking-widest hover:text-on-surface transition-colors">
-            <Shield size={14} />
-            Privacy
-          </button>
-        </div>
       </div>
     </aside>
   );

@@ -2,14 +2,30 @@ import React from 'react';
 import { Search, Bell, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, subDays } from 'date-fns';
 
+import { Entry } from '../types';
+
 interface HeaderProps {
   title: string;
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  entries: Entry[];
 }
 
-export default function Header({ title, selectedDate, onDateChange }: HeaderProps) {
+export default function Header({ title, selectedDate, onDateChange, entries }: HeaderProps) {
   const todayLabel = format(selectedDate, 'EEEE, MMMM d');
+
+  const handleExport = () => {
+    const dataStr = JSON.stringify(entries, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `routine-archive-${format(new Date(), 'yyyy-MM-dd')}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    linkElement.remove();
+  };
 
   return (
     <header className="bg-bg-color border-b border-border sticky top-0 z-40 px-6 md:px-10 py-6 md:py-10 flex flex-col md:flex-row gap-4 md:gap-0 justify-between items-center w-full">
@@ -34,16 +50,12 @@ export default function Header({ title, selectedDate, onDateChange }: HeaderProp
           </button>
         </div>
 
-        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
-          <button className="text-on-surface-muted p-2 hover:bg-surface border border-border rounded-lg transition-colors flex-shrink-0">
-            <Search size={18} />
-          </button>
-          <button className="text-on-surface-muted p-2 hover:bg-surface border border-border rounded-lg transition-colors flex-shrink-0">
-            <Bell size={18} />
-          </button>
-          <div className="h-6 w-[1px] bg-border mx-1 hidden sm:block"></div>
-          <button className="text-[10px] font-bold uppercase tracking-widest text-primary border border-primary px-3 py-1.5 rounded-md hover:bg-primary hover:text-white transition-all flex-shrink-0">
-            Export
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-end">
+          <button 
+            onClick={handleExport}
+            className="text-[10px] font-bold uppercase tracking-widest text-primary border border-primary px-4 py-2 rounded-md hover:bg-primary hover:text-white transition-all flex-shrink-0"
+          >
+            Export Archive
           </button>
         </div>
       </div>
