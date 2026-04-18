@@ -1,0 +1,28 @@
+{
+  "entities": {
+    "Entry": {
+      "title": "Entry",
+      "description": "A meal or workout log entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "userId": { "type": "string", "description": "Owner of the entry" },
+        "type": { "type": "string", "enum": ["meal", "workout"] },
+        "date": { "type": "string", "format": "date-time" },
+        "time": { "type": "string", "description": "HH:mm for meals" },
+        "description": { "type": "string", "description": "Meal description" },
+        "category": { "type": "string", "enum": ["breakfast", "lunch", "dinner", "snack"] },
+        "workoutType": { "type": "string" },
+        "duration": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "userId", "type", "date"]
+    }
+  },
+  "firestore": {
+    "/entries/{entryId}": {
+      "schema": "Entry",
+      "description": "Collection of user activity logs"
+    }
+  }
+}
