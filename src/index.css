@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  --color-bg-color: #F7F7F7;
+  --color-surface: #FFFFFF;
+  --color-border: #EEEEEE;
+  
+  --color-primary: #2A2A2A;
+  --color-primary-dim: #1A1A1A;
+  --color-primary-container: #EEEEEE;
+  --color-on-primary-container: #1A1A1A;
+  
+  --color-on-surface: #1A1A1A;
+  --color-on-surface-muted: #888888;
+  
+  --color-success: #4CAF50;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-color text-on-surface antialiased;
+  }
+}
+
+.routine-card {
+  @apply bg-surface border border-border rounded-[12px] p-5 shadow-none;
+}
+
+.section-label {
+  @apply text-[11px] font-semibold uppercase tracking-[1px] text-on-surface-muted mb-6 block;
+}
+
+.routine-btn {
+  @apply bg-primary text-white border-none py-3 px-4 rounded-[8px] text-[13px] font-medium cursor-pointer text-center transition-all hover:bg-primary-dim active:scale-95;
+}
+
+.routine-btn-outline {
+  @apply bg-transparent border border-border text-on-surface hover:bg-bg-color;
+}
+
+.routine-tag {
+  @apply inline-block py-0.5 px-2 bg-[#F0F0F0] rounded-[4px] text-[10px] font-semibold uppercase;
+}
+
