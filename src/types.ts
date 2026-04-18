@@ -1,4 +1,4 @@
-export type View = 'dashboard' | 'habit-log' | 'insights' | 'history';
+export type View = 'dashboard' | 'habit-log' | 'insights' | 'history' | 'profile';
 
 export type MealCategory = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 

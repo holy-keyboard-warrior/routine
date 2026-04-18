@@ -5,14 +5,27 @@ import DashboardView from './components/DashboardView';
 import HabitLogView from './components/HabitLogView';
 import InsightsView from './components/InsightsView';
 import HistoryView from './components/HistoryView';
+import ProfileView from './components/ProfileView';
 import { View, Entry } from './types';
 import { getEntries, saveEntry } from './lib/storage';
 import { startOfDay } from 'date-fns';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth, googleProvider } from './lib/firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [entries, setEntries] = useState<Entry[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
+  const [user, loading] = useAuthState(auth);
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Archive access denied:', error);
+    }
+  };
 
   useEffect(() => {
     const stored = getEntries();
@@ -31,6 +44,7 @@ export default function App() {
       case 'habit-log': return 'Archive Journal';
       case 'insights': return 'Trends & Growth';
       case 'history': return 'Archive';
+      case 'profile': return 'Archivist Identity';
       default: return 'Archivist';
     }
   };
@@ -63,6 +77,7 @@ export default function App() {
           )}
           {currentView === 'insights' && <InsightsView entries={entries} />}
           {currentView === 'history' && <HistoryView entries={entries} />}
+          {currentView === 'profile' && <ProfileView />}
         </div>
 
         {/* Footer */}
@@ -77,16 +92,20 @@ export default function App() {
       </main>
 
       {/* Mobile Nav */}
-      <nav className="lg:hidden fixed bottom-5 left-5 right-5 bg-surface border border-border py-4 px-6 flex justify-around items-center z-50 rounded-2xl shadow-lg">
+      <nav className="lg:hidden fixed bottom-5 left-5 right-5 bg-surface border border-border py-4 px-4 flex justify-around items-center z-50 rounded-2xl shadow-lg">
         <MobileNavItem icon={<LayoutDashboard size={20} />} active={currentView === 'dashboard'} onClick={() => setCurrentView('dashboard')} />
         <MobileNavItem icon={<CalendarRange size={20} />} active={currentView === 'habit-log'} onClick={() => setCurrentView('habit-log')} />
         <MobileNavItem icon={<BarChart3 size={20} />} active={currentView === 'insights'} onClick={() => setCurrentView('insights')} />
         <MobileNavItem icon={<HistoryIcon size={20} />} active={currentView === 'history'} onClick={() => setCurrentView('history')} />
+        {user ? (
+          <MobileNavItem icon={<UserIcon size={20} />} active={currentView === 'profile'} onClick={() => setCurrentView('profile')} />
+        ) : (
+          !loading && <MobileNavItem icon={<LogInIcon size={20} />} active={false} onClick={handleSignIn} />
+        )}
       </nav>
     </div>
   );
 }
-
 function MobileNavItem({ icon, active, onClick }: { icon: any, active: boolean, onClick: () => void }) {
   return (
     <button 
@@ -99,5 +118,5 @@ function MobileNavItem({ icon, active, onClick }: { icon: any, active: boolean, 
 }
 
 // Icons needed for mobile nav since they aren't exported from the component files individually
-import { LayoutDashboard, CalendarRange, BarChart3, History as HistoryIcon } from 'lucide-react';
+import { LayoutDashboard, CalendarRange, BarChart3, History as HistoryIcon, User as UserIcon, LogIn as LogInIcon } from 'lucide-react';
 
