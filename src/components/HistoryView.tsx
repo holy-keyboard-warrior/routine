@@ -34,7 +34,7 @@ export default function HistoryView({ entries }: HistoryViewProps) {
           <div key={dateKey}>
             <div className="mb-4">
               <span className="text-[12px] font-bold text-primary">
-                {formatDateLabel(dateKey)}
+                {formatDateLabel(groupEntries[0].date)}
               </span>
             </div>
 
