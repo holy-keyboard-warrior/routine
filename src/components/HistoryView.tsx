@@ -39,9 +39,14 @@ export default function HistoryView({ entries }: HistoryViewProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {groupEntries.map((entry) => (
-                <EntryCard key={entry.id} entry={entry} />
-              ))}
+              {groupEntries
+                .sort((a, b) => {
+                  const getTime = (e: Entry) => (e.type === 'meal' ? e.time : '00:00');
+                  return getTime(a).localeCompare(getTime(b));
+                })
+                .map((entry) => (
+                  <EntryCard key={entry.id} entry={entry} />
+                ))}
             </div>
           </div>
         ))}

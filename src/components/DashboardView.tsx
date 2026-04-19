@@ -13,7 +13,18 @@ interface DashboardViewProps {
 export default function DashboardView({ entries, onViewChange, selectedDate }: DashboardViewProps) {
   const todayLabel = format(selectedDate, 'MMMM d');
   
-  const todayEntries = entries.filter(e => isSameDay(parseISO(e.date), selectedDate));
+  const todayEntries = entries
+    .filter(e => isSameDay(parseISO(e.date), selectedDate))
+    .sort((a, b) => {
+      // Helper to normalize time for comparison
+      const getTimeValue = (entry: Entry) => {
+        if (entry.type === 'meal') return entry.time;
+        // For workouts, we don't have a time field yet, so we treat them as early or handle them
+        // If it's a future improvement, we'd add time to workouts too.
+        return '00:00'; 
+      };
+      return getTimeValue(a).localeCompare(getTimeValue(b));
+    });
 
   return (
     <div className="p-6 md:p-10 max-w-7xl mx-auto w-full pb-32 lg:pb-10">
